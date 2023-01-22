@@ -22,11 +22,12 @@ contract Membership {
 
     mapping(address => bool) isMember;
     mapping(address => Members) member;
-    uint[3] membershipFee=[10,20,30];
-    address owner;
+    uint[3] membershipFee=[100,200,300];
+    address payable owner;
+    uint totalBalance;
 
     //contract owner address
-      constructor(address _owner) {
+      constructor(address payable _owner) {
         owner=_owner;
     }  
  
@@ -42,6 +43,7 @@ contract Membership {
                 member[msg.sender].day=_day;
                 member[msg.sender].month=_month;
                 member[msg.sender].year=_year;
+                totalBalance += msg.value;
                 isMember[msg.sender] = true;
             }
         }
@@ -64,4 +66,11 @@ contract Membership {
         membershipFee[2]=_goldMember;
     }
     
+    //with draw all money from owner
+    function withDrawAll()external payable{
+        require(msg.sender == owner);
+        owner.transfer(totalBalance);
+        totalBalance=0;
+    }
 }
+
